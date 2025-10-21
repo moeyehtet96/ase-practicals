@@ -15,18 +15,25 @@
 /* Global variables **********************************************************/
 
 // put any global variables you need here
+#define P_PCR 56
+#define Rx_PCR 57
+#define Tx_PCR 58
+#define U1_PCR 59
+#define U2_PCR 43
+#define U3_PCR 6
+
 int counter = 0;
 int is_increasing = 1; // true - increasing, false - decreasing
 
 /* Helper function */
 void set_led_states(int u1_state, int u2_state, int u3_state, int tx_state, int rx_state, int p_state)
 {
-	SIU.GPDO[56].R = p_state;
-	SIU.GPDO[57].R = rx_state;
-	SIU.GPDO[58].R = tx_state;
-	SIU.GPDO[6].R = u3_state;
-	SIU.GPDO[43].R = u2_state;
-	SIU.GPDO[59].R = u1_state;
+	SIU.GPDO[P_PCR].R = p_state;
+	SIU.GPDO[Rx_PCR].R = rx_state;
+	SIU.GPDO[Tx_PCR].R = tx_state;
+	SIU.GPDO[U3_PCR].R = u3_state;
+	SIU.GPDO[U2_PCR].R = u2_state;
+	SIU.GPDO[U1_PCR].R = u1_state;
 }
 
 /* Task-1 implementation *****************************************************/
@@ -141,26 +148,26 @@ int main(void)
 		int is_BT1_pressed = SIU.GPDI[60].R;
 		int is_BT2_pressed = SIU.GPDI[62].R;
 
-		if (is_BT1_pressed)
+		if (is_BT1_pressed == 1)
 		{
 			is_increasing = 1;
 		}
-		else if (is_BT2_pressed)
+		else if (is_BT2_pressed == 1)
 		{
 			is_increasing = 0;
 		}
 
-		if (is_sw1_on && !is_sw2_on)
+		if (is_sw1_on == 1 && is_sw2_on == 0 && is_sw3_on == 0)
 		{
 			int pot_value = (ADC0.CDR[5].R & 0x00000FFF);
 			task_pot(pot_value);
 		}
-		else if (!is_sw1_on && is_sw2_on && !is_sw3_on)
+		else if (is_sw1_on == 0 && is_sw2_on == 1 && is_sw3_on == 0)
 		{
 			int ldr_value = (ADC1.CDR[3].R & 0x00000FFF);
 			task_pot(ldr_value);
 		}
-		else if (!is_sw1_on && !is_sw2_on && is_sw3_on)
+		else if (is_sw1_on == 0 && is_sw2_on == 0 && is_sw3_on == 1)
 		{
 			if (!is_sw4_on)
 			{
