@@ -169,7 +169,7 @@ int main(void)
 		}
 		else if (is_sw1_on == 0 && is_sw2_on == 0 && is_sw3_on == 1)
 		{
-			if (!is_sw4_on)
+			if (is_sw4_on == 0)
 			{
 				PIT_StopTimer(1);
 			}
