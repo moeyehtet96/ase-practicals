@@ -18,6 +18,17 @@
 int counter = 0;
 int is_increasing = 1; // true - increasing, false - decreasing
 
+/* Helper function */
+void set_led_states(int u1_state, int u2_state, int u3_state, int tx_state, int rx_state, int p_state)
+{
+	SIU.GPDO[56].R = p_state;
+	SIU.GPDO[57].R = rx_state;
+	SIU.GPDO[58].R = tx_state;
+	SIU.GPDO[6].R = u3_state;
+	SIU.GPDO[43].R = u2_state;
+	SIU.GPDO[59].R = u1_state;
+}
+
 /* Task-1 implementation *****************************************************/
 void task_pot(int x)
 {
@@ -25,57 +36,27 @@ void task_pot(int x)
 	/* TO-DO: your task implementations **************************************/
 	if (x < 682)
 	{
-		SIU.GPDO[56].R = 1;
-		SIU.GPDO[57].R = 0;
-		SIU.GPDO[58].R = 0;
-		SIU.GPDO[6].R = 0;
-		SIU.GPDO[43].R = 0;
-		SIU.GPDO[59].R = 0;
+		set_led_states(0, 0, 0, 0, 0, 1);
 	}
 	else if (x >= 682 && x < 1364)
 	{
-		SIU.GPDO[56].R = 1;
-		SIU.GPDO[57].R = 1;
-		SIU.GPDO[58].R = 0;
-		SIU.GPDO[6].R = 0;
-		SIU.GPDO[43].R = 0;
-		SIU.GPDO[59].R = 0;
+		set_led_states(0, 0, 0, 0, 1, 1);
 	}
 	else if (x >= 1364 && x < 2046)
 	{
-		SIU.GPDO[56].R = 1;
-		SIU.GPDO[57].R = 1;
-		SIU.GPDO[58].R = 1;
-		SIU.GPDO[6].R = 0;
-		SIU.GPDO[43].R = 0;
-		SIU.GPDO[59].R = 0;
+		set_led_states(0, 0, 0, 1, 1, 1);
 	}
 	else if (x >= 2046 && x < 2728)
 	{
-		SIU.GPDO[56].R = 1;
-		SIU.GPDO[57].R = 1;
-		SIU.GPDO[58].R = 1;
-		SIU.GPDO[6].R = 1;
-		SIU.GPDO[43].R = 0;
-		SIU.GPDO[59].R = 0;
+		set_led_states(0, 0, 1, 1, 1, 1);
 	}
 	else if (x >= 2728 && x < 3410)
 	{
-		SIU.GPDO[56].R = 1;
-		SIU.GPDO[57].R = 1;
-		SIU.GPDO[58].R = 1;
-		SIU.GPDO[6].R = 1;
-		SIU.GPDO[43].R = 1;
-		SIU.GPDO[59].R = 0;
+		set_led_states(0, 1, 1, 1, 1, 1);
 	}
 	else if (x >= 3420)
 	{
-		SIU.GPDO[56].R = 1;
-		SIU.GPDO[57].R = 1;
-		SIU.GPDO[58].R = 1;
-		SIU.GPDO[6].R = 1;
-		SIU.GPDO[43].R = 1;
-		SIU.GPDO[59].R = 1;
+		set_led_states(1, 1, 1, 1, 1, 1);
 	}
 
 	/*************************************************************************/
@@ -98,44 +79,28 @@ void task_counter(void)
 	switch (counter)
 	{
 	case 0:
-		SIU.GPDO[6].R = 0;
-		SIU.GPDO[43].R = 0;
-		SIU.GPDO[59].R = 0;
+		set_led_states(0, 0, 0, 0, 0, 0);
 		break;
 	case 1:
-		SIU.GPDO[6].R = 1;
-		SIU.GPDO[43].R = 0;
-		SIU.GPDO[59].R = 0;
+		set_led_states(0, 0, 1, 0, 0, 0);
 		break;
 	case 2:
-		SIU.GPDO[6].R = 0;
-		SIU.GPDO[43].R = 1;
-		SIU.GPDO[59].R = 0;
+		set_led_states(0, 1, 0, 0, 0, 0);
 		break;
 	case 3:
-		SIU.GPDO[6].R = 1;
-		SIU.GPDO[43].R = 1;
-		SIU.GPDO[59].R = 0;
+		set_led_states(0, 1, 1, 0, 0, 0);
 		break;
 	case 4:
-		SIU.GPDO[6].R = 0;
-		SIU.GPDO[43].R = 0;
-		SIU.GPDO[59].R = 1;
+		set_led_states(1, 0, 0, 0, 0, 0);
 		break;
 	case 5:
-		SIU.GPDO[6].R = 1;
-		SIU.GPDO[43].R = 0;
-		SIU.GPDO[59].R = 1;
+		set_led_states(1, 0, 1, 0, 0, 0);
 		break;
 	case 6:
-		SIU.GPDO[6].R = 0;
-		SIU.GPDO[43].R = 1;
-		SIU.GPDO[59].R = 1;
+		set_led_states(1, 1, 0, 0, 0, 0);
 		break;
 	case 7:
-		SIU.GPDO[6].R = 1;
-		SIU.GPDO[43].R = 1;
-		SIU.GPDO[59].R = 1;
+		set_led_states(1, 1, 1, 0, 0, 0);
 		break;
 	}
 
@@ -209,12 +174,7 @@ int main(void)
 		}
 		else
 		{
-			SIU.GPDO[56].R = 0;
-			SIU.GPDO[57].R = 0;
-			SIU.GPDO[58].R = 0;
-			SIU.GPDO[6].R = 0;
-			SIU.GPDO[43].R = 0;
-			SIU.GPDO[59].R = 0;
+			set_led_states(0, 0, 0, 0, 0, 0);
 		}
 
 		/*********************************************************************/
