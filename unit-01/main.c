@@ -22,7 +22,7 @@
 #define U2_PCR 43
 #define U3_PCR 6
 
-int counter = 0;
+int counter = 0;	   // counter initialization
 int is_increasing = 1; // true - increasing, false - decreasing
 
 /* Helper function */
@@ -41,6 +41,8 @@ void task_pot(int x)
 {
 
 	/* TO-DO: your task implementations **************************************/
+
+	// map potentiometer readings to LEDs
 	if (x < 682)
 	{
 		set_led_states(0, 0, 0, 0, 0, 1);
@@ -74,6 +76,8 @@ void task_ldr(int x)
 {
 
 	/* TO-DO: your task implementations **************************************/
+
+	// reuse task_pot()
 
 	/*************************************************************************/
 }
@@ -130,7 +134,6 @@ int main(void)
 	/* Configure and start timer channels */
 	// PIT_ConfigureTimer(<channel>, <interval in milliseconds>);
 	PIT_ConfigureTimer(1, 1000); // timer channel 1, 1s
-	// PIT_StartTimer(1);
 
 	/*************************************************************************/
 
@@ -145,6 +148,8 @@ int main(void)
 		int is_sw3_on = SIU.GPDI[54].R;
 		int is_sw4_on = SIU.GPDI[55].R;
 
+		int total_sw_on = is_sw1_on + is_sw2_on + is_sw3_on;
+
 		int is_BT1_pressed = SIU.GPDI[60].R;
 		int is_BT2_pressed = SIU.GPDI[62].R;
 
@@ -157,27 +162,33 @@ int main(void)
 			is_increasing = 0;
 		}
 
-		if (is_sw1_on == 1 && is_sw2_on == 0 && is_sw3_on == 0)
+		if (total_sw_on == 1)
 		{
-			int pot_value = (ADC0.CDR[5].R & 0x00000FFF);
-			task_pot(pot_value);
-		}
-		else if (is_sw1_on == 0 && is_sw2_on == 1 && is_sw3_on == 0)
-		{
-			int ldr_value = (ADC1.CDR[3].R & 0x00000FFF);
-			task_pot(ldr_value);
-		}
-		else if (is_sw1_on == 0 && is_sw2_on == 0 && is_sw3_on == 1)
-		{
-			if (is_sw4_on == 0)
+			if (is_sw1_on == 1)
 			{
-				PIT_StopTimer(1);
+				// task 1
+				int pot_value = (ADC0.CDR[5].R & 0x00000FFF);
+				task_pot(pot_value);
 			}
-			else
+			else if (is_sw2_on == 1)
 			{
-				PIT_StartTimer(1);
+				// task 2
+				int ldr_value = (ADC1.CDR[3].R & 0x00000FFF);
+				task_pot(ldr_value);
 			}
-			task_counter();
+			else if (is_sw3_on == 1)
+			{
+				// task 3
+				if (is_sw4_on == 0)
+				{
+					PIT_StopTimer(1);
+				}
+				else
+				{
+					PIT_StartTimer(1);
+				}
+				task_counter();
+			}
 		}
 		else
 		{
