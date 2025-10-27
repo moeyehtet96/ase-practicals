@@ -24,6 +24,7 @@
 
 int counter = 0;	   // counter initialization
 int is_increasing = 1; // true - increasing, false - decreasing
+int counter_dir = 1;   // 1 if increasing, -1 if decreasing
 
 /* Helper function */
 void set_led_states(int u1_state, int u2_state, int u3_state, int tx_state, int rx_state, int p_state)
@@ -87,33 +88,10 @@ void task_counter(void)
 {
 
 	/* TO-DO: your task implementations **************************************/
-	switch (counter)
-	{
-	case 0:
-		set_led_states(0, 0, 0, 0, 0, 0);
-		break;
-	case 1:
-		set_led_states(0, 0, 1, 0, 0, 0);
-		break;
-	case 2:
-		set_led_states(0, 1, 0, 0, 0, 0);
-		break;
-	case 3:
-		set_led_states(0, 1, 1, 0, 0, 0);
-		break;
-	case 4:
-		set_led_states(1, 0, 0, 0, 0, 0);
-		break;
-	case 5:
-		set_led_states(1, 0, 1, 0, 0, 0);
-		break;
-	case 6:
-		set_led_states(1, 1, 0, 0, 0, 0);
-		break;
-	case 7:
-		set_led_states(1, 1, 1, 0, 0, 0);
-		break;
-	}
+
+	SIU.GPDO[U3_PCR].R = counter & 0x01;
+	SIU.GPDO[U2_PCR].R = (counter >> 1) & 0x01;
+	SIU.GPDO[U1_PCR].R = (counter >> 2) & 0x01;
 
 	/*************************************************************************/
 }
@@ -156,10 +134,12 @@ int main(void)
 		if (is_BT1_pressed == 1)
 		{
 			is_increasing = 1;
+			counter_dir = 1;
 		}
 		else if (is_BT2_pressed == 1)
 		{
 			is_increasing = 0;
+			counter_dir = -1;
 		}
 
 		if (total_sw_on == 1)
@@ -212,27 +192,18 @@ void PIT_Channel_1(void)
 {
 
 	/* TO-DO: your task implementations **************************************/
-	if (is_increasing)
+
+	if (counter == 7 && counter_dir == 1)
 	{
-		if (counter == 7)
-		{
-			counter = 0;
-		}
-		else
-		{
-			counter += 1;
-		}
+		counter = 0;
+	}
+	else if (counter == 0 && counter_dir == -1)
+	{
+		counter = 7;
 	}
 	else
 	{
-		if (counter == 0)
-		{
-			counter = 7;
-		}
-		else
-		{
-			counter -= 1;
-		}
+		counter += counter_dir;
 	}
 
 	/*************************************************************************/
