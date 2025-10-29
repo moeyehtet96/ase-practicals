@@ -22,9 +22,8 @@
 #define U2_PCR 43
 #define U3_PCR 6
 
-int counter = 0;	   // counter initialization
-int is_increasing = 1; // true - increasing, false - decreasing
-int counter_dir = 1;   // 1 if increasing, -1 if decreasing
+int counter = 0;	 // counter initialization
+int counter_dir = 1; // 1 if increasing, -1 if decreasing
 
 /* Helper function */
 void set_led_states(int u1_state, int u2_state, int u3_state, int tx_state, int rx_state, int p_state)
@@ -44,6 +43,7 @@ void task_pot(int x)
 	/* TO-DO: your task implementations **************************************/
 
 	// map potentiometer readings to LEDs
+	// set_led_s
 	if (x < 682)
 	{
 		set_led_states(0, 0, 0, 0, 0, 1);
@@ -133,12 +133,10 @@ int main(void)
 
 		if (is_BT1_pressed == 1)
 		{
-			is_increasing = 1;
 			counter_dir = 1;
 		}
 		else if (is_BT2_pressed == 1)
 		{
-			is_increasing = 0;
 			counter_dir = -1;
 		}
 
