@@ -32,8 +32,9 @@ void can_send_speed(int value)
 	/* TO-DO: your task implementations **************************************/
 
 	// TASK 3
-	uint32_t raw_speed = (uint32_t)value;				  // converts to uint32_t
-	int speed_kmh = (raw_speed * 16u + 273u / 2u) / 273u; // speed in km/h
+	// uint32_t raw_speed = (uint32_t)value;		// converts to uint32_t
+	int speed_kmh = ((long)value * 240u + 273u / 2u) / 4095u; // speed in km/h
+	// why rounding? - so that decimal values are rounded properly (not truncated)
 
 	CAN_0.BUF[9].DATA.B[0] = speed_kmh;
 
