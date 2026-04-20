@@ -26,7 +26,7 @@ int counter = 0;	 // counter initialization
 int counter_dir = 1; // 1 if increasing, -1 if decreasing
 
 /* Helper function */
-void set_led_states(int u1_state, int u2_state, int u3_state, int tx_state, int rx_state, int p_state)
+void set_led_states(bool u1_state, bool u2_state, bool u3_state, bool tx_state, bool rx_state, bool p_state)
 {
 	SIU.GPDO[P_PCR].R = p_state;
 	SIU.GPDO[Rx_PCR].R = rx_state;
@@ -46,27 +46,27 @@ void task_pot(int x)
 	// set_led_s
 	if (x < 682)
 	{
-		set_led_states(0, 0, 0, 0, 0, 1);
+		set_led_states(false, false, false, false, false, true);
 	}
 	else if (x >= 682 && x < 1364)
 	{
-		set_led_states(0, 0, 0, 0, 1, 1);
+		set_led_states(false, false, false, false, true, true);
 	}
 	else if (x >= 1364 && x < 2046)
 	{
-		set_led_states(0, 0, 0, 1, 1, 1);
+		set_led_states(false, false, false, true, true, true);
 	}
 	else if (x >= 2046 && x < 2728)
 	{
-		set_led_states(0, 0, 1, 1, 1, 1);
+		set_led_states(false, false, true, true, true, true);
 	}
 	else if (x >= 2728 && x < 3410)
 	{
-		set_led_states(0, 1, 1, 1, 1, 1);
+		set_led_states(false, true, true, true, true, true);
 	}
 	else if (x >= 3420)
 	{
-		set_led_states(1, 1, 1, 1, 1, 1);
+		set_led_states(true, true, true, true, true, true);
 	}
 
 	/*************************************************************************/
